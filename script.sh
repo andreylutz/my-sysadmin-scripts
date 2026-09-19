@@ -1,18 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+INTERVAL_SECONDS=60
 LOG_FILE="sys-monitor.log"
 
-if ! touch "$LOG_FILE"; 
-then
-  echo "Ошибка: не удалось создать $LOG_FILE" >&2
-  exit 1
-fi
+write_report() {
+  printf '\n'
+  printf 'Состояние системы: %s\n' "$(date '+%d-%m-%Y %T')"
+  printf '\n'
 
-{
-  printf '\n'
-  printf 'Состояния системы: %s\n' "$(date '+%d-%m-%Y %T')"
-  printf '\n'
   printf '%s\n' 'ОПЕРАТИВНАЯ ПАМЯТЬ'
   printf '%s\n' '────────────────────────────────────────────────────────────'
   free -h
@@ -27,5 +23,18 @@ fi
   printf '%s\n' '────────────────────────────────────────────────────────────'
   uptime
   printf '\n'
+
   printf '%s\n' '***'
-} >> "$LOG_FILE"
+}
+
+if ! touch "$LOG_FILE"; 
+then
+  echo "Ошибка: не удалось создать $LOG_FILE" >&2
+  exit 1
+fi
+
+while true; 
+do
+  write_report >> "$LOG_FILE"
+  sleep "$INTERVAL_SECONDS"
+done
