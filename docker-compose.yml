@@ -1,0 +1,9 @@
+services:
+  monitor:
+    build: .
+    container_name: monitor-script
+    volumes:
+      - monitor-data:/var/www
+
+volumes:
+  monitor-data:
